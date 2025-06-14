@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 # ✅ Colab API URL — update this if ngrok URL changes
-COLAB_API_URL = "https://0fef-34-169-80-20.ngrok-free.app"
+COLAB_API_URL = "enter your ngrok link generated when you run the colab code"
 
 # ✅ Input format
 class OutfitRequest(BaseModel):
