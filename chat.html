@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GlamGen Chat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chat-box" class="chat-box"></div>
+
+    <form id="chat-form" class="input-area">
+      <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+
+    const questions = [
+      { key: "age", question: "Let’s get started! How young are you? 😉" },
+      { key: "gender", question: "Awesome! And how do you identify — fashion queen, king, or something fabulous in between?" },
+      { key: "occasion", question: "What’s the vibe? Is this outfit for a party, date, interview, or something else?" },
+      { key: "season", question: "Picture the weather — is it sunny summer, cozy winter, blooming spring, or breezy fall?" },
+      { key: "style", question: "What’s your fashion mood? Casual chill, classy formal, street-style, or totally unique?" },
+      { key: "color", question: "Final touch! Any favorite colors or shades you'd love to wear today?" }
+    ];
+
+    let currentQuestion = 0;
+    const responses = {};
+
+    window.onload = () => {
+      addMessage('bot', questions[currentQuestion].question);
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      addMessage('user', userMessage);
+      input.value = '';
+
+      const currentKey = questions[currentQuestion].key;
+
+      if (currentKey === 'gender') {
+        const lower = userMessage.toLowerCase();
+        if (lower.includes("male") || lower.includes("man") || lower.includes("king")) {
+          responses[currentKey] = "male";
+          addMessage('bot', "Got it — masculine vibes coming right up! 👑");
+        } else if (lower.includes("female") || lower.includes("woman") || lower.includes("queen")) {
+          responses[currentKey] = "female";
+          addMessage('bot', "Fabulous! Femme fashion it is. 👸");
+        } else {
+          responses[currentKey] = "other";
+          addMessage('bot', "Unique style detected! Let’s go with something bold and different. ✨");
+        }
+      } else {
+        responses[currentKey] = userMessage;
+      }
+
+      currentQuestion++;
+
+      setTimeout(() => {
+        if (currentQuestion < questions.length) {
+          addMessage('bot', questions[currentQuestion].question);
+        } else {
+          addMessage('bot', "Thanks for the deets! 🎨 Creating your glam look now...");
+          sendToBackend(responses); 
+        }
+      }, 800);
+    });
+
+    function addMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function addImage(url) {
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = "Generated Outfit";
+      img.className = "outfit-image"; 
+      img.crossOrigin = "anonymous";
+      img.style.maxWidth = "60%";
+      img.style.marginTop = "10px";
+      chatBox.appendChild(img);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+
+    function sendToBackend(data) {
+      fetch("http://127.0.0.1:8000/generate/", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.error) {
+          addMessage('bot', "Oops! Something went wrong. 😢");
+        } else {
+          addMessage('bot', `Here's your look: ${result.description}`);
+          addImage(`data:image/png;base64,${result.image_base64}`);
+
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        addMessage('bot', "Oops! Could not reach the server.");
+      });
+
+    }
+  </script>
+</body>
+</html>
