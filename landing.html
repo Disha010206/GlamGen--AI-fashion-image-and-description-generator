@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GlamGen - Fashion Advisor</title>
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Main Content (Hidden initially) -->
+  <div id="main-content" style="display: none;">
+    <img src="logo.png" alt="GlamGen Logo" class="logo" />
+
+    <div class="content">
+      <h1>Welcome to GlamGen</h1>
+      <p>Your AI Fashion Advisor</p>
+      <button id="start-btn">Click here to start</button>
+    </div>
+  </div>
+
+  <script>
+    // Show loader first
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader");
+      const content = document.getElementById("main-content");
+
+      setTimeout(() => {
+        loader.style.opacity = 0;
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1500); // Adjust the delay if needed
+    });
+
+    // Button transition to chat
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("start-btn");
+      btn.addEventListener("click", () => {
+        btn.style.backgroundColor = '#E952EC';
+        btn.style.color = '#fff';
+        btn.style.border = '2px solid white';
+        btn.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+        document.body.style.transition = "opacity 0.5s ease";
+        document.body.style.opacity = 0;
+        setTimeout(() => {
+          window.location.href = "chat.html";
+        }, 500);
+      });
+    });
+  </script>
+</body>
+
+  
+</html>
+
